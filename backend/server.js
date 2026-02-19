@@ -11,14 +11,19 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Atlas - proper connection options
+// MongoDB Atlas connection
 mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 30000, // wait 30s for server selection
-  })
+  .connect(process.env.MONGO_URI) // no extra options needed
   .then(() => console.log("MongoDB Connected ✅"))
   .catch((err) => console.log("MongoDB Error:", err.message));
+
+mongoose.connection.once("open", () =>
+  console.log("MongoDB connection is ready ✅")
+);
+
+mongoose.connection.on("error", (err) =>
+  console.error("MongoDB connection error:", err)
+);
 
 // Optional: monitor connection state
 mongoose.connection.on("error", (err) => console.error("MongoDB connection error:", err));
