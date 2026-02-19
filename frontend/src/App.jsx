@@ -7,6 +7,13 @@ function App() {
   const [chat, setChat] = useState([]);
   const chatEndRef = useRef(null);
 
+  // =========================
+  // UPDATE FOR DEPLOYMENT:
+  // Use Render backend URL from env variable
+  // Fallback to localhost for local development
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  // =========================
+
   // List of keywords for automatic highlighting
   const keywordColors = {
     breakfast: "red",
@@ -23,7 +30,10 @@ function App() {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch("http://localhost:5000/history");
+      // =========================
+      // UPDATED: use API_URL
+      const res = await fetch(`${API_URL}/history`);
+      // =========================
       const data = await res.json();
 
       const formattedChat = data.map((c) => {
@@ -65,11 +75,15 @@ function App() {
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:5000/chat", {
+      // =========================
+      // UPDATED: use API_URL
+      const res = await fetch(`${API_URL}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message }),
       });
+      // =========================
+
       const data = await res.json();
 
       // Assign fixed emoji once for this AI message
@@ -91,7 +105,10 @@ function App() {
 
   const deleteHistory = async () => {
     try {
-      await fetch("http://localhost:5000/history", { method: "DELETE" });
+      // =========================
+      // UPDATED: use API_URL
+      await fetch(`${API_URL}/history`, { method: "DELETE" });
+      // =========================
       setChat([]);
     } catch (err) {
       console.error("Failed to delete history:", err);
