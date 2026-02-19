@@ -11,7 +11,7 @@ function App() {
   // UPDATE FOR DEPLOYMENT:
   // Use Render backend URL from env variable
   // Fallback to localhost for local development
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  const API_URL = "https://ai-fitness-coach-35n1.onrender.com";
   // =========================
 
   // List of keywords for automatic highlighting
