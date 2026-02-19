@@ -4,14 +4,22 @@
 
 ---
 
-## 🔥 Project Overview
+🌐 **Live Demo:** https://ai-fitness-coach-rust.vercel.app/  
+🖥 **Backend API (Render):** https://ai-fitness-coach-35n1.onrender.com  
 
-**AI Fitness Coach** is a modern full-stack web application that leverages **Groq AI** and **MongoDB Atlas** to provide personalized, fully readable workout and diet plans. Users can interact via a chat interface, get historical chats, and even delete previous sessions.  
+---
 
-**Tech Stack:**  
+## 🔥 - **Project Overview**
+
+**AI Fitness Coach** is a modern full-stack web application that leverages **Groq AI** and **MongoDB Atlas** to provide personalized, fully readable workout and diet plans. Users can interact via a chat interface, get historical chats, and delete previous sessions.
+
+### **Tech Stack**
 - **Backend:** Node.js, Express.js, MongoDB, Mongoose, Groq AI  
 - **Frontend:** React, Bootstrap, CSS  
 - **Database:** MongoDB Atlas  
+- **Deployment:** Render (Backend), Vercel (Frontend)
+
+---
 
 ---
 
@@ -36,14 +44,16 @@ AI-Fitness-Coach/
 └── README.md                # Project documentation
 ```
 
-## ✨ Features
+## ## ✨ - **Features**
 
 - 💬 **Interactive Chat:** Ask for workout, diet, or both — AI responds in beautifully formatted text  
-- 🏋️ **Workout Plans:** Muscle gain, weight loss, cardio, stay fit, etc.  
-- 🥗 **Diet Plans:** Vegan, Vegetarian, Non-Vegetarian, with detailed calorie & macros  
-- 📜 **Chat History:** Fetch previous messages with AI  
-- 🗑 **Delete History:** Clear all past chats instantly  
-- 🎨 **UI Highlights:** Collapsible sections, emoji highlights, syntax-styled headers & lists  
+- 🏋️ **Workout Plans:** Muscle gain, weight loss, cardio, stay fit  
+- 🥗 **Diet Plans:** Vegan, Vegetarian, Non-Vegetarian with calories & macros  
+- 📜 **Chat History:** Fetch previous messages from MongoDB  
+- 🗑  **Delete History:** Clear all past chats instantly  
+- 🎨 **Modern UI:** Collapsible sections, emoji highlights, gradient AI cards  
+- 📱 **Responsive Design:** Mobile, tablet & desktop friendly  
+
 
 ---
 
@@ -77,6 +87,25 @@ npm start
 ```
 
 ### Frontend runs on http://localhost:3000 💻
+
+## 🌐 - **Deployment**
+
+### 🖥 **Backend → Render**
+
+- Hosted on Render  
+- Environment Variables configured:
+  - `GROQ_API_KEY`
+  - `MONGO_URI`
+
+---
+
+### 🌐 **Frontend → Vercel**
+
+- Hosted on Vercel  
+- Connected to production backend:
+
+https://ai-fitness-coach-35n1.onrender.com
+
 
 ## 💬 Usage
 
@@ -129,18 +158,17 @@ npm start
 
 ## 💡 Future Improvements
 
-- 🔗 Add user authentication & profiles  
-- 📊 Display charts for progress tracking  
-- 🌐 Deploy frontend & backend on **Vercel / Render**  
-- ⚡ Add voice input for chat  
+- 🔐 Add JWT Authentication  
+- 👤 User profiles & saved plans  
+- 📊 Fitness progress charts  
+- 🎙 Voice-to-text input  
+- 📅 Weekly structured planner  
+- 🌎 Multi-language support 
 
 ---
 
 ## 📸 Preview
 
-<div align="center">
-  <img src="frontend/public/chat-screenshot.png" width="80%" alt="Chat Screenshot">
-</div>
 
 ---
 
