@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js"; // IMPORTANT for offcanvas
+import "bootstrap/dist/js/bootstrap.bundle.min.js"; // ✅ REQUIRED for offcanvas
 import "./App.css";
 
 function App() {
@@ -115,7 +115,15 @@ function App() {
 
       if (line.startsWith("**") && line.endsWith("**")) {
         return (
-          <strong key={idx} className="ai-heading">
+          <strong
+            key={idx}
+            style={{
+              display: "block",
+              color: "#ff4d4d",
+              fontSize: "1.1rem",
+              margin: "8px 0",
+            }}
+          >
             {line.replace(/\*\*/g, "")}
           </strong>
         );
@@ -134,10 +142,22 @@ function App() {
         return (
           <li
             key={idx}
+            style={{ marginBottom: "5px", lineHeight: "1.4", color: "#f0f0f0" }}
             dangerouslySetInnerHTML={{
               __html: line.replace(/^- |\* /, ""),
             }}
           />
+        );
+      }
+
+      if (line.startsWith("Day:")) {
+        return (
+          <div key={idx} style={{ margin: "8px 0" }}>
+            <button className="collapsible">{line}</button>
+            <div className="content">
+              <p>Click to expand meals/exercises...</p>
+            </div>
+          </div>
         );
       }
 
@@ -147,16 +167,33 @@ function App() {
       return (
         <p
           key={idx}
+          style={{
+            margin: "5px 0",
+            lineHeight: "1.5",
+            fontSize: "0.95rem",
+            color: "#ffffff",
+          }}
           dangerouslySetInnerHTML={{ __html: line }}
         />
       );
     });
   };
 
+  useEffect(() => {
+    const collapsibles = document.querySelectorAll(".collapsible");
+    collapsibles.forEach((c) => {
+      c.onclick = function () {
+        this.classList.toggle("active");
+        const content = this.nextElementSibling;
+        content.style.display =
+          content.style.display === "block" ? "none" : "block";
+      };
+    });
+  }, [chat]);
+
   return (
     <>
       <div className="chat-container">
-        {/* HEADER */}
         <div className="chat-header d-flex justify-content-between align-items-center">
           <button
             className="btn btn-light btn-sm"
@@ -168,10 +205,9 @@ function App() {
 
           <span>💪 AI Fitness Coach</span>
 
-          <div style={{ width: "40px" }}></div>
+          <div></div>
         </div>
 
-        {/* BODY */}
         <div className="chat-body">
           {chat.map((msg, idx) => (
             <div
@@ -187,7 +223,6 @@ function App() {
           <div ref={chatEndRef}></div>
         </div>
 
-        {/* INPUT */}
         <div className="chat-input input-group">
           <input
             type="text"
@@ -210,7 +245,7 @@ function App() {
         id="historyCanvas"
       >
         <div className="offcanvas-header">
-          <h5>Chat History</h5>
+          <h5 className="offcanvas-title">Chat History</h5>
           <button
             type="button"
             className="btn-close btn-close-white"
@@ -224,7 +259,10 @@ function App() {
           {chat
             .filter((msg) => msg.type === "user")
             .map((msg, index) => (
-              <div key={index} className="history-item">
+              <div
+                key={index}
+                className="mb-2 p-2 bg-secondary rounded"
+              >
                 {msg.text}
               </div>
             ))}
