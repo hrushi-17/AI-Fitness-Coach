@@ -10,11 +10,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Atlas
+// MongoDB Atlas - proper connection options
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 30000, // wait 30s for server selection
+  })
   .then(() => console.log("MongoDB Connected ✅"))
   .catch((err) => console.log("MongoDB Error:", err.message));
+
+// Optional: monitor connection state
+mongoose.connection.on("error", (err) => console.error("MongoDB connection error:", err));
+mongoose.connection.once("open", () => console.log("MongoDB connection is ready ✅"));
 
 // Groq AI setup
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
@@ -29,6 +37,11 @@ app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
   try {
+    // Check DB connection before inserting
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(500).json({ error: "Database not connected yet" });
+    }
+
     const systemPrompt = `
 You are a professional fitness coach and AI assistant. 
 Rules for AI responses:
@@ -67,6 +80,7 @@ Example formatting:
 - Calories: 450, Protein: 25g, Carbs: 70g, Fat: 15g
 `;
 
+    // Groq AI completion
     const response = await groq.chat.completions.create({
       model: "llama-3.1-8b-instant",
       messages: [
@@ -78,14 +92,9 @@ Example formatting:
     const reply = response.choices[0].message.content.trim();
 
     // Save chat in DB
-    await Chat.create({
-      message,
-      reply,
-    });
+    await Chat.create({ message, reply });
 
-    res.json({
-      reply, // Always readable formatted text
-    });
+    res.json({ reply });
   } catch (error) {
     console.error("FULL GROQ ERROR:", error.message);
     res.status(500).json({ error: error.message });
@@ -113,6 +122,4 @@ app.delete("/history", async (req, res) => {
 });
 
 // Start server
-app.listen(5000, () => {
-  console.log("Server running on port 5000 🚀");
-});
+app.listen(5000, () => console.log("Server running on port 5000 🚀"));
