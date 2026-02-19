@@ -34,7 +34,7 @@ AI-Fitness-Coach/
 │   └── public/              # Static assets
 │
 └── README.md                # Project documentation
-
+```
 
 ## ✨ Features
 
@@ -54,24 +54,29 @@ AI-Fitness-Coach/
 ```bash
 cd backend
 npm install
-
+```
 
 ### Create .env file:
 
+```bash
 GROQ_API_KEY=your_groq_api_key_here
 MONGO_URI=mongodb+srv://admin:password@cluster0.mongodb.net/fitness
-
+```
 
 ### Start server:
 
+```bash
 node Server.js
 # Server runs on http://localhost:5000 ✅
-
+```
 
 ### 2️⃣ Frontend
+```bash
 cd frontend
 npm install
 npm start
+```
+
 # Frontend runs on http://localhost:3000 💻
 
 ## 💬 Usage
