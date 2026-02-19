@@ -67,9 +67,7 @@ MONGO_URI=mongodb+srv://admin:password@cluster0.mongodb.net/fitness
 
 node Server.js
 
-```bash
-Server runs on http://localhost:5000 ✅
-```
+### Server runs on http://localhost:5000 ✅
 
 ### 2️⃣ Frontend
 ```bash
@@ -78,7 +76,7 @@ npm install
 npm start
 ```
 
-# Frontend runs on http://localhost:3000 💻
+### Frontend runs on http://localhost:3000 💻
 
 ## 💬 Usage
 
