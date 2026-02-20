@@ -4,22 +4,34 @@
 
 ---
 
-🌐 **Live Demo:** https://ai-fitness-coach-rust.vercel.app/  
+🌐 **Live Demo:** https://ai-fitness-coach.vercel.app/  
 🖥 **Backend API (Render):** https://ai-fitness-coach-35n1.onrender.com  
 
 ---
 
-## 🔥 - **Project Overview**
+## 🔥 Project Overview
 
-**AI Fitness Coach** is a modern full-stack web application that leverages **Groq AI** and **MongoDB Atlas** to provide personalized, fully readable workout and diet plans. Users can interact via a chat interface, get historical chats, and delete previous sessions.
+**AI Fitness Coach** is a modern full-stack web application that leverages **Groq AI** and **MongoDB Atlas** to provide personalized, fully readable workout and diet plans. Users can interact via a chat interface, get historical chats, securely manage their accounts with JWT authentication, and reset their passwords via OTP.
 
 ### **Tech Stack**
-- **Backend:** Node.js, Express.js, MongoDB, Mongoose, Groq AI  
-- **Frontend:** React, Bootstrap, CSS  
+- **Backend:** Node.js, Express.js, MongoDB, Mongoose, Groq AI, JWT, NodeMailer
+- **Frontend:** React, Bootstrap, React Router, Axios, CSS  
 - **Database:** MongoDB Atlas  
 - **Deployment:** Render (Backend), Vercel (Frontend)
 
 ---
+
+## ✨ Features
+
+- 🔐 **Secure Authentication:** JWT-based user login & registration.
+- 💬 **Interactive Chat:** Ask for workout, diet, or both — AI responds in beautifully formatted text.
+- 🏋️ **Workout Plans:** Muscle gain, weight loss, cardio, stay fit.
+- 🥗 **Diet Plans:** Vegan, Vegetarian, Non-Vegetarian with calories & macros.
+- 📜 **Chat History:** Fetch previous messages from MongoDB tied to your user account.
+- 🗑  **Delete History:** Clear all past chats instantly.
+- 📧 **Password Recovery:** Secure OTP-based password reset via email.
+- 🎨 **Modern UI:** Collapsible sections, emoji highlights, gradient AI cards based on Netflix UI.
+- 📱 **Responsive Design:** Mobile, tablet & desktop friendly.
 
 ---
 
@@ -29,31 +41,26 @@
 AI-Fitness-Coach/
 │
 ├── backend/                 # Node.js API & MongoDB Models
-│   ├── models/
-│   │   └── Chart.js         # Mongoose schema for chat history
+│   ├── controllers/         # Logic for auth and chat routes
+│   ├── middleware/          # JWT protection middleware
+│   ├── models/              # Mongoose schemas (Chat, User, Admin)
+│   ├── routes/              # Express API endpoints
+│   ├── utils/               # Helpers like sendEmail for OTP
 │   ├── .env                 # API keys & DB connection
-│   └── Server.js            # Express server & API routes
+│   └── server.js            # Express server entry point
 │
-├── frontend/                # React Frontend
+├── frontend/                # React Frontend (Vite)
 │   ├── src/
-│   │   ├── App.jsx          # Main chat component & UI
-│   │   ├── App.css          # Custom CSS styling & themes
-│   │   └── index.js         # React entry point
+│   │   ├── components/      # Reusable UI components
+│   │   ├── pages/           # Pages (Home, Login, Register, Forgot/Reset Password, etc.)
+│   │   ├── services/        # Axios API configurations
+│   │   ├── App.jsx          # Router & Main App component
+│   │   ├── App.css          # Custom CSS styling (Netflix themes)
+│   │   └── main.jsx         # React application entry point
 │   └── public/              # Static assets
 │
 └── README.md                # Project documentation
 ```
-
-## ## ✨ - **Features**
-
-- 💬 **Interactive Chat:** Ask for workout, diet, or both — AI responds in beautifully formatted text  
-- 🏋️ **Workout Plans:** Muscle gain, weight loss, cardio, stay fit  
-- 🥗 **Diet Plans:** Vegan, Vegetarian, Non-Vegetarian with calories & macros  
-- 📜 **Chat History:** Fetch previous messages from MongoDB  
-- 🗑  **Delete History:** Clear all past chats instantly  
-- 🎨 **Modern UI:** Collapsible sections, emoji highlights, gradient AI cards  
-- 📱 **Responsive Design:** Mobile, tablet & desktop friendly  
-
 
 ---
 
@@ -66,75 +73,70 @@ cd backend
 npm install
 ```
 
-### Create .env file:
-
+**Create `.env` file in the `backend/` directory:**
 ```bash
 GROQ_API_KEY=your_groq_api_key_here
 MONGO_URI=mongodb+srv://admin:password@cluster0.mongodb.net/fitness
+JWT_SECRET=your_jwt_secret_key_here
+JWT_EXPIRE=30d
+EMAIL_SERVICE=gmail
+EMAIL_USERNAME=your_email@gmail.com
+EMAIL_PASSWORD=your_app_password
+EMAIL_FROM=noreply@fitnesscoach.ai
 ```
 
-### Start server:
-
-node Server.js
-
-### Server runs on http://localhost:5000 ✅
+**Start server:**
+```bash
+npm start
+```
+*Server runs on http://localhost:5000 ✅*
 
 ### 2️⃣ Frontend
 ```bash
 cd frontend
 npm install
-npm start
 ```
 
-### Frontend runs on http://localhost:3000 💻
+**Create `.env` file in the `frontend/` directory:**
+```bash
+VITE_API_URL=http://localhost:5000/api
+```
 
-## 🌐 - **Deployment**
-
-### 🖥 **Backend → Render**
-
-- Hosted on Render  
-- Environment Variables configured:
-  - `GROQ_API_KEY`
-  - `MONGO_URI`
+**Start frontend:**
+```bash
+npm run dev
+```
+*Frontend runs on http://localhost:5173 💻*
 
 ---
 
+## 🌐 Deployment
+
+### 🖥 **Backend → Render**
+- Hosted on **Render**  
+- Ensure **all Environment Variables** from your `.env` are added to your Render Web Service settings.
+
 ### 🌐 **Frontend → Vercel**
-
-- Hosted on Vercel  
-- Connected to production backend:
-
-https://ai-fitness-coach-35n1.onrender.com
-
-
-## 💬 Usage
-
-- Type your fitness or diet query in the input field.
-- Receive AI-generated responses in structured text format:
-  - 💪 **Workout Plan**
-  - 🥗 **Diet Plan**
-- Expand/collapse days or meals for a clean view.
-- Delete chat history with the **Delete All History** button.
-
-## 🛠 Technology Stack
-
-| Layer    | Tools & Libraries                        |
-|----------|-----------------------------------------|
-| Backend  | Node.js, Express, Groq AI, Mongoose     |
-| Frontend | React, Bootstrap, CSS, HTML             |
-| Database | MongoDB Atlas                            |
-| Styling  | Flexbox, Gradients, Collapsible UI, Emojis |
+- Hosted on **Vercel**  
+- Add `VITE_API_URL=https://ai-fitness-coach-35n1.onrender.com/api` matching the deployed backend to Vercel Environment Variables.
 
 ---
 
 ## 📂 API Endpoints
 
-| Method | Endpoint    | Description                        |
-|--------|------------|------------------------------------|
-| GET    | `/`        | Backend health check                |
-| POST   | `/chat`    | Send message to AI & get response   |
-| GET    | `/history` | Fetch all chat history              |
-| DELETE | `/history` | Delete all chat history             |
+| Method | Endpoint                        | Description                        |
+|--------|---------------------------------|------------------------------------|
+| GET    | `/`                             | Backend health check               |
+| POST   | `/api/auth/register`            | Register a new user account        |
+| POST   | `/api/auth/login`               | Login and get JWT token            |
+| POST   | `/api/auth/forgotpassword`      | Send OTP to user's email           |
+| POST   | `/api/auth/verifyotp`           | Verify OTP code                    |
+| PUT    | `/api/auth/resetpassword`       | Reset user password                |
+| POST   | `/api/chat`                     | Send message to AI & get response  |
+| GET    | `/api/history`                  | Fetch all chat history             |
+| DELETE | `/api/history`                  | Delete all chat history            |
+
+*(Make sure to use Authorization: Bearer <token> headers for chat & history requests).*
 
 ---
 
@@ -150,25 +152,20 @@ https://ai-fitness-coach-35n1.onrender.com
 
 ## 📝 Notes
 
-- Keep your `.env` file secure and **do not push it to GitHub**  
-- MongoDB Atlas cluster must be accessible  
-- Groq API key is required for AI responses  
+- Keep your `.env` file secure and **do not push it to GitHub.**
+- Add `.env` to `.gitignore`.
+- MongoDB Atlas cluster IP settings must be accessible (0.0.0.0/0).
+- Groq API key is required for AI responses.
 
 ---
 
 ## 💡 Future Improvements
 
-- 🔐 Add JWT Authentication  
 - 👤 User profiles & saved plans  
 - 📊 Fitness progress charts  
 - 🎙 Voice-to-text input  
 - 📅 Weekly structured planner  
 - 🌎 Multi-language support 
-
----
-
-## 📸 Preview
-
 
 ---
 
