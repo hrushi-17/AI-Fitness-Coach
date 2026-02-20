@@ -15,6 +15,12 @@ exports.register = async (req, res, next) => {
 
         sendToken(user, 201, res);
     } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({
+                success: false,
+                error: "Email is already registered. Please login.",
+            });
+        }
         res.status(500).json({
             success: false,
             error: error.message,
