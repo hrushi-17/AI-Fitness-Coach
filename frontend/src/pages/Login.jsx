@@ -20,7 +20,7 @@ function Login() {
         try {
             const { data } = await api.post("/auth/login", { email, password });
             localStorage.setItem("token", data.token);
-            navigate("/");
+            navigate("/chat");
         } catch (err) {
             setError(
                 err.response && err.response.data.error
