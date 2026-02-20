@@ -104,9 +104,6 @@ Example formatting:
     const reply = response.choices[0].message.content.trim();
 
 
-    // Save chat in DB
-    await Chat.create({ message, reply });
-
     // Save chat in DB linked to user
     await Chat.create({
       user: req.user.id,
