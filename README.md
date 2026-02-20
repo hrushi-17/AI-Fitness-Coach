@@ -4,7 +4,7 @@
 
 ---
 
-🌐 **Live Demo:** https://ai-fitness-coach.vercel.app/  
+🌐 **Live Demo:** https://ai-fitness-coach-rust.vercel.app/  
 🖥 **Backend API (Render):** https://ai-fitness-coach-35n1.onrender.com  
 
 ---
