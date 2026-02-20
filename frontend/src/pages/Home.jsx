@@ -113,6 +113,19 @@ function Home() {
         navigate("/login");
     };
 
+    const handleDeleteAccount = async () => {
+        if (window.confirm("Are you sure you want to delete your account? All your chats and account data will be permanently removed. This action cannot be undone.")) {
+            try {
+                await api.delete("/auth/delete");
+                localStorage.removeItem("token");
+                navigate("/");
+            } catch (err) {
+                console.error("Failed to delete account:", err);
+                alert("Failed to delete account. Please try again.");
+            }
+        }
+    };
+
     const renderStructuredText = (msg) => {
         const { text, emoji } = msg;
 
@@ -299,6 +312,27 @@ function Home() {
                         onClick={deleteHistory}
                     >
                         <FiTrash2 /> Clear All History
+                    </button>
+
+                    <button
+                        className="btn btn-outline-danger w-100 mt-3 d-flex align-items-center justify-content-center gap-2"
+                        onClick={handleDeleteAccount}
+                        style={{
+                            border: "1px solid #dc3545",
+                            color: "#dc3545",
+                            background: "transparent",
+                            transition: "all 0.3s ease"
+                        }}
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.background = "#dc3545";
+                            e.currentTarget.style.color = "white";
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.background = "transparent";
+                            e.currentTarget.style.color = "#dc3545";
+                        }}
+                    >
+                        Delete Account
                     </button>
                 </div>
             </div>

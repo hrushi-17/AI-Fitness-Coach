@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Chat = require("../models/Chat");
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
@@ -265,4 +266,20 @@ exports.resetPassword = async (req, res, next) => {
 const sendToken = (user, statusCode, res) => {
     const token = user.getSignedJwtToken();
     res.status(statusCode).json({ success: true, token });
+};
+
+exports.deleteAccount = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ success: false, error: "User not found" });
+        }
+
+        await Chat.deleteMany({ user: req.user.id });
+        await User.findByIdAndDelete(req.user.id);
+
+        res.status(200).json({ success: true, data: "Account deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
 };
