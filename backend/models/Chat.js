@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const chatSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: true
+  },
   message: { type: String, required: true },
   reply: { type: String, required: true }, // Save JSON string if workout plan
   createdAt: {

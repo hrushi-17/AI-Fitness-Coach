@@ -37,8 +37,15 @@ app.get("/", (req, res) => {
   res.send("AI Fitness Coach Backend Running ✅");
 });
 
+
+
+// Routes
+app.use("/api/auth", require("./routes/auth"));
+
+const { protect } = require("./middleware/auth");
+
 // Chat route
-app.post("/chat", async (req, res) => {
+app.post("/api/chat", protect, async (req, res) => {
   const { message } = req.body;
 
   try {
@@ -96,9 +103,16 @@ Example formatting:
 
     const reply = response.choices[0].message.content.trim();
 
+
     // Save chat in DB
     await Chat.create({ message, reply });
 
+    // Save chat in DB linked to user
+    await Chat.create({
+      user: req.user.id,
+      message,
+      reply
+    });
     res.json({ reply });
   } catch (error) {
     console.error("FULL GROQ ERROR:", error.message);
@@ -107,9 +121,9 @@ Example formatting:
 });
 
 // Chat history
-app.get("/history", async (req, res) => {
+app.get("/api/history", protect, async (req, res) => {
   try {
-    const chats = await Chat.find().sort({ createdAt: 1 });
+    const chats = await Chat.find({ user: req.user.id }).sort({ createdAt: 1 });
     res.json(chats);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch history" });
@@ -117,9 +131,9 @@ app.get("/history", async (req, res) => {
 });
 
 // Delete all history
-app.delete("/history", async (req, res) => {
+app.delete("/api/history", protect, async (req, res) => {
   try {
-    await Chat.deleteMany({});
+    await Chat.deleteMany({ user: req.user.id });
     res.json({ message: "All chat history deleted" });
   } catch (err) {
     res.status(500).json({ error: "Failed to delete history" });
@@ -127,4 +141,5 @@ app.delete("/history", async (req, res) => {
 });
 
 // Start server
-app.listen(5000, () => console.log("Server running on port 5000 🚀"));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT} 🚀`));

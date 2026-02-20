@@ -5,7 +5,10 @@
   box-sizing: border-box;
 }
 
-html, body, #root {
+
+html,
+body,
+#root {
   height: 100%;
   width: 100%;
 }
@@ -24,21 +27,76 @@ body {
   display: flex;
   flex-direction: column;
   background: #1c1c1c;
+  background: radial-gradient(circle at center top, #2e0e12 0%, #111111 70%);
   overflow: hidden;
   color: white;
 }
 
-/* ================= HEADER ================= */
 
 .chat-header {
-  background: #e50914;
-  color: white;
-  padding: 15px 20px;
-  font-size: 1.3rem;
-  font-weight: 500;
+  background: rgba(15, 15, 15, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #e50914;
+  padding: 16px 25px;
+  font-size: 1.5rem;
+  font-weight: 800;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  z-index: 10;
+}
+
+
+.chat-header span {
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-icon-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-icon-btn:hover {
+  color: #e50914;
+  transform: scale(1.1);
+}
+
+.logout-btn {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.5px;
+}
+
+.logout-btn:hover {
+  color: white;
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
 /* ================= CHAT BODY ================= */
@@ -53,55 +111,60 @@ body {
   scroll-behavior: smooth;
 }
 
-/* ================= Chat Bubbles ================= */
+/* ================= Chat Bubbles (Netflix UI Form) ================= */
 
 /* User bubble */
 .chat-msg.user {
-  background: #e50914;
-  color: white;
+  background: linear-gradient(135deg, #e50914, #b0070f);
+  color: #ffffff;
   align-self: flex-end;
-  border-radius: 20px 20px 0 20px;
-  padding: 15px 20px;
-  max-width: 80%;
-  box-shadow: 0 5px 12px rgba(0,0,0,0.3);
+  border-radius: 18px 18px 0 18px;
+  padding: 14px 20px;
+  max-width: 75%;
+  font-size: 0.98rem;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .chat-msg.user:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.45);
 }
 
-/* AI bubble */
 .chat-msg.ai,
 .chat-msg.ai-plan,
 .chat-msg.ai-card {
-  background: linear-gradient(135deg, #2a2a2a, #3b3b3b);
+  background: rgba(35, 35, 35, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   color: #ffffff;
   align-self: flex-start;
-  border-radius: 20px 20px 20px 0;
-  padding: 18px 22px;
-  max-width: 80%;
+  border-radius: 18px 18px 18px 0;
+  padding: 18px 24px;
+  max-width: 85%;
   position: relative;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   overflow-wrap: break-word;
   word-break: break-word;
   overflow: visible;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
   font-weight: 400;
 }
 
 .chat-msg.ai:hover,
 .chat-msg.ai-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  background: rgba(45, 45, 45, 0.95);
 }
 
-/* Structured AI cards */
+/* Structured AI cards - Netflix style borders */
 .chat-msg.ai-card {
-  border-left: 4px solid #ff4d4d;
-  background: linear-gradient(145deg, #2e2e2e, #3c3c3c);
-  padding: 20px;
+  border-left: 4px solid #e50914;
+  background: rgba(28, 28, 28, 0.9);
+  padding: 22px;
   margin-bottom: 8px;
 }
 
@@ -279,4 +342,301 @@ body {
   .chat-msg {
     max-width: 100%;
   }
+}
+
+/* ================= AUTHENTICATION UI ENHANCEMENTS ================= */
+
+/* Auth Card */
+.auth-card {
+  background: linear-gradient(145deg, #1c1c1c, #252525);
+  border: 1px solid #333;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(229, 9, 20, 0.1);
+  color: white;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-card .text-muted {
+  color: #dddddd !important;
+}
+
+/* Subtle glowing accent at the top of the card */
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #e50914, transparent);
+  animation: shimmer 2s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Auth Title */
+.auth-title {
+  color: #e50914;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Auth Inputs */
+.auth-input-group {
+  margin-bottom: 1.5rem;
+}
+
+.auth-label {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.auth-input {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 12px 16px;
+  width: 100%;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: #e50914;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(229, 9, 20, 0.2);
+  background-color: #333;
+}
+
+.auth-input::placeholder {
+  color: #777;
+}
+
+/* Input group for eye icon */
+.auth-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-input-wrapper .auth-input {
+  padding-right: 45px;
+}
+
+.auth-eye-btn {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.auth-eye-btn:hover {
+  color: white;
+}
+
+/* Auth Button */
+.auth-btn {
+  background: linear-gradient(135deg, #e50914, #b0070f);
+  color: white;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  width: 100%;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+  margin-top: 10px;
+}
+
+.auth-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.5);
+  background: linear-gradient(135deg, #f00a15, #c20810);
+}
+
+.auth-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 10px rgba(229, 9, 20, 0.3);
+}
+
+.auth-btn:disabled {
+  background: #555;
+  color: #888;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Auth Links */
+.auth-link {
+  color: #bbb;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.auth-link:hover {
+  color: #e50914;
+}
+
+.auth-link-highlight {
+  color: #e50914;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-link-highlight:hover {
+  text-decoration: underline;
+}
+
+/* OTP 6-box Styles */
+.otp-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 30px 0;
+}
+
+.otp-box {
+  width: 50px;
+  height: 60px;
+  background-color: #2a2a2a;
+  border: 2px solid #444;
+  border-radius: 12px;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.otp-box:focus {
+  outline: none;
+  border-color: #e50914;
+  background-color: #333;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3), 0 0 10px rgba(229, 9, 20, 0.3);
+  transform: scale(1.05);
+}
+
+.otp-box::selection {
+  background: transparent;
+}
+
+/* ================= OFFCANVAS NETFLIX UI ================= */
+
+/* The Sidebar Background */
+.custom-offcanvas {
+  background: rgba(20, 20, 20, 0.85) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 5px 0 30px rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+
+.custom-offcanvas .offcanvas-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 25px;
+}
+
+.custom-offcanvas .offcanvas-title {
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fff;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+}
+
+.custom-offcanvas .offcanvas-body {
+  padding: 20px 15px;
+}
+
+/* History Items acting like movie cards */
+.history-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Netflix red line hover effect */
+.history-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: #e50914;
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+  transform-origin: bottom;
+}
+
+.history-item:hover::before {
+  transform: scaleY(1);
+}
+
+.history-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  transform: translateX(4px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhancing standard buttons to look Netflix premium */
+.btn-netflix {
+  background: #e50914;
+  color: #ffffff !important;
+  border: none;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-netflix:hover {
+  background: #b0070f;
+  color: #ffffff !important;
+  box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
 }
