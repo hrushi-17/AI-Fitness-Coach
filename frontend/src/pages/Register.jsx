@@ -13,7 +13,7 @@ function Register() {
 
     // Regex patterns
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/; // At least 6 chars, 1 letter, 1 number
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/; // At least 6 chars, 1 letter, 1 number
 
     const handleRegister = async (e) => {
         e.preventDefault();
