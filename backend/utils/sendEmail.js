@@ -26,7 +26,7 @@ const sendEmail = async (options) => {
         service: "gmail",
         auth: {
             user: process.env.EMAIL_USERNAME,
-            pass: process.env.EMAIL_PASSWORD, // Must be a 16-character App Password
+            pass: (process.env.EMAIL_PASSWORD || "").trim().replace(/\s/g, ""), // Automatically remove spaces from App Password
         },
         tls: {
             // This prevents issues with certificates in internal networks
