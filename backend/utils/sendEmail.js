@@ -30,6 +30,9 @@ const sendEmail = async (options) => {
             pass: process.env.EMAIL_PASSWORD,
         },
         family: 4, // Force IPv4
+        lookup: (hostname, options, callback) => {
+            dns.lookup(hostname, { family: 4 }, callback);
+        },
     });
 
     const mailOptions = {
