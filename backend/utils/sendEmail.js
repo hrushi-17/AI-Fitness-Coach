@@ -1,65 +1,56 @@
 const nodemailer = require("nodemailer");
 const dns = require("dns");
 
-// Force IPv4 first to avoid Render/Gmail connectivity issues (ENETUNREACH)
+// Force IPv4 globally to avoid Render's ENETUNREACH IPv6 issues
 if (dns.setDefaultResultOrder) {
     dns.setDefaultResultOrder("ipv4first");
 }
 
 const sendEmail = async (options) => {
-    // Check for mock credentials or missing credentials
+    // 1. Mandatory Credential Check
     if (
         !process.env.EMAIL_USERNAME ||
         process.env.EMAIL_USERNAME === "your_email@gmail.com"
     ) {
         console.log("----------------------------------------------------");
-        console.log("MOCK EMAIL SERVICE (No credentials provided)");
+        console.log("MOCK EMAIL SERVICE (Missing EMAIL_USERNAME)");
         console.log(`To: ${options.email}`);
         console.log(`Subject: ${options.subject}`);
-        console.log(`Text: ${options.html || options.text}`); // Handle both html/text props if needed, though controller sends 'text' prop with html content
         console.log("----------------------------------------------------");
         return;
     }
 
-    // Resolve smtp.gmail.com to an IPv4 address to force IPv4 and avoid ENETUNREACH on Render
-    let smtpHost = "smtp.gmail.com";
-    try {
-        const addresses = await dns.promises.resolve4(smtpHost);
-        if (addresses && addresses.length > 0) {
-            smtpHost = addresses[0];
-            console.log(`Resolved ${"smtp.gmail.com"} to IPv4: ${smtpHost}`);
-        }
-    } catch (dnsErr) {
-        console.warn("DNS resolution for smtp.gmail.com failed, falling back to hostname:", dnsErr);
-    }
-
+    // 2. Ultimate Gmail configuration for Render
+    // Using 'service: gmail' is more robust than manual host/port
     const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: 465,
-        secure: true, // Use implicit SSL/TLS for port 465
+        service: "gmail",
         auth: {
             user: process.env.EMAIL_USERNAME,
-            pass: process.env.EMAIL_PASSWORD,
+            pass: process.env.EMAIL_PASSWORD, // Must be a 16-character App Password
         },
-        servername: "smtp.gmail.com", // Crucial for TLS SNI when using an IP address
-        connectionTimeout: 10000, // 10 seconds
-        greetingTimeout: 10000, // 10 seconds
-        socketTimeout: 15000, // 15 seconds
-        family: 4, // Force IPv4
+        tls: {
+            // This prevents issues with certificates in internal networks
+            rejectUnauthorized: false
+        }
     });
 
     const mailOptions = {
-        from: process.env.EMAIL_FROM,
+        from: process.env.EMAIL_FROM || process.env.EMAIL_USERNAME,
         to: options.email,
         subject: options.subject,
         html: options.text,
     };
 
     try {
+        console.log(`Attempting to send email to: ${options.email}...`);
         const info = await transporter.sendMail(mailOptions);
-        console.log("Message sent: %s", info.messageId);
+        console.log("Email sent successfully! ID:", info.messageId);
     } catch (error) {
-        console.error("Error sending email:", error);
+        // Log the specific error to Render console for debugging
+        console.error("SMTP Error detected:", error.message);
+        if (error.code === 'EAUTH') {
+            console.error("CRITICAL: Authentication failed. Please verify EMAIL_PASSWORD is an App Password.");
+        }
         throw error;
     }
 };
