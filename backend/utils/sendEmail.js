@@ -1,4 +1,10 @@
 const nodemailer = require("nodemailer");
+const dns = require("dns");
+
+// Force IPv4 first to avoid Render/Gmail connectivity issues (ENETUNREACH)
+if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder("ipv4first");
+}
 
 const sendEmail = async (options) => {
     // Check for mock credentials or missing credentials
