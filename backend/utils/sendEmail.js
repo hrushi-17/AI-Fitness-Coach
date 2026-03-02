@@ -21,18 +21,31 @@ const sendEmail = async (options) => {
         return;
     }
 
+    // Resolve smtp.gmail.com to an IPv4 address to force IPv4 and avoid ENETUNREACH on Render
+    let smtpHost = "smtp.gmail.com";
+    try {
+        const addresses = await dns.promises.resolve4(smtpHost);
+        if (addresses && addresses.length > 0) {
+            smtpHost = addresses[0];
+            console.log(`Resolved ${"smtp.gmail.com"} to IPv4: ${smtpHost}`);
+        }
+    } catch (dnsErr) {
+        console.warn("DNS resolution for smtp.gmail.com failed, falling back to hostname:", dnsErr);
+    }
+
     const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
+        host: smtpHost,
         port: 587,
         secure: false, // Use STARTTLS
         auth: {
             user: process.env.EMAIL_USERNAME,
             pass: process.env.EMAIL_PASSWORD,
         },
+        servername: "smtp.gmail.com", // Crucial for TLS SNI when using an IP address
+        connectionTimeout: 5000, // 5 seconds
+        greetingTimeout: 5000, // 5 seconds
+        socketTimeout: 10000, // 10 seconds
         family: 4, // Force IPv4
-        lookup: (hostname, options, callback) => {
-            dns.lookup(hostname, { family: 4 }, callback);
-        },
     });
 
     const mailOptions = {
