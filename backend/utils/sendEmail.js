@@ -1,43 +1,54 @@
 const nodemailer = require("nodemailer");
 const dns = require("dns");
 
-// Force IPv4 globally to avoid Render's ENETUNREACH IPv6 issues
+/**
+ * GLOBAL DNS OVERRIDE
+ * Forces the entire Node.js process to ignore IPv6 (AAAA) records.
+ * This is the only definitive way to stop Nodemailer from attempting 
+ * IPv6 connections that result in ENETUNREACH on platforms like Render.
+ */
+const originalLookup = dns.lookup;
+dns.lookup = function (hostname, options, callback) {
+    if (typeof options === "function") {
+        callback = options;
+        options = { family: 4 };
+    } else if (typeof options === "object") {
+        options.family = 4;
+    } else {
+        options = { family: 4 };
+    }
+    return originalLookup(hostname, options, callback);
+};
+
+// Also set the result order as a secondary line of defense
 if (dns.setDefaultResultOrder) {
     dns.setDefaultResultOrder("ipv4first");
 }
 
 const sendEmail = async (options) => {
-    // Log credential status (safely)
-    console.log("Email Service Debug Hook:");
-    console.log("- USERNAME present:", !!process.env.EMAIL_USERNAME);
-    console.log("- PASSWORD present:", !!process.env.EMAIL_PASSWORD);
-
-    if (!process.env.EMAIL_USERNAME || !process.env.EMAIL_PASSWORD) {
-        console.error("CRITICAL: Missing email credentials in environment variables.");
-        throw new Error("Email configuration error: check server logs");
-    }
-
-    // Clean password
+    // 1. Sanitize the App Password
     const cleanPassword = (process.env.EMAIL_PASSWORD || "").trim().replace(/\s/g, "");
 
-    // Use Port 465 (SSL) with explicit host - often more stable than 'service' helper on Render
+    // 2. Configure Transporter
+    // Port 587 with secure: false (STARTTLS) is often more reliable than 465 
+    // when facing firewall restrictions in cloud environments.
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
-        port: 465,
-        secure: true, // Use SSL
+        port: 587,
+        secure: false,
         auth: {
             user: process.env.EMAIL_USERNAME,
             pass: cleanPassword,
         },
         tls: {
-            rejectUnauthorized: false,
-            servername: "smtp.gmail.com"
+            rejectUnauthorized: false, // Bypass certificate issues in internal networks
         },
-        // DEBUGGING: These will show the full SMTP conversation in Render logs
-        logger: true,
+        // TIMEOUTS: Minimize "Pending" states as requested by the user
+        connectionTimeout: 5000, // 5 seconds
+        greetingTimeout: 5000,
+        socketTimeout: 5000,
+        logger: true, // Keep logging active for the user to see the conversation
         debug: true,
-        connectionTimeout: 15000, // 15s
-        greetingTimeout: 15000,
     });
 
     const mailOptions = {
@@ -48,15 +59,14 @@ const sendEmail = async (options) => {
     };
 
     try {
-        console.log(`Starting email transmission to: ${options.email}...`);
+        console.log(`Starting definitive email broadcast to: ${options.email}...`);
         const info = await transporter.sendMail(mailOptions);
-        console.log("SUCCESS: Email sent! Message ID:", info.messageId);
+        console.log("SUCCESS: SMTP handshake complete. ID:", info.messageId);
         return info;
     } catch (error) {
-        console.error("FAILED to send email.");
-        console.error("Error Message:", error.message);
-        console.error("Error Code:", error.code);
-        console.error("Error Command:", error.command);
+        console.error("CRITICAL SMTP FAILURE.");
+        console.error("Message:", error.message);
+        console.error("Code:", error.code);
         throw error;
     }
 };
