@@ -30,6 +30,7 @@ const sendEmail = async (options) => {
             pass: process.env.EMAIL_PASSWORD,
         },
         family: 4, // Force IPv4
+        localAddress: "0.0.0.0", // Force local side to IPv4 to fix "Local (:::0)" error
         lookup: (hostname, options, callback) => {
             dns.lookup(hostname, { family: 4 }, callback);
         },
