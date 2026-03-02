@@ -35,16 +35,16 @@ const sendEmail = async (options) => {
 
     const transporter = nodemailer.createTransport({
         host: smtpHost,
-        port: 587,
-        secure: false, // Use STARTTLS
+        port: 465,
+        secure: true, // Use implicit SSL/TLS for port 465
         auth: {
             user: process.env.EMAIL_USERNAME,
             pass: process.env.EMAIL_PASSWORD,
         },
         servername: "smtp.gmail.com", // Crucial for TLS SNI when using an IP address
-        connectionTimeout: 5000, // 5 seconds
-        greetingTimeout: 5000, // 5 seconds
-        socketTimeout: 10000, // 10 seconds
+        connectionTimeout: 10000, // 10 seconds
+        greetingTimeout: 10000, // 10 seconds
+        socketTimeout: 15000, // 15 seconds
         family: 4, // Force IPv4
     });
 
