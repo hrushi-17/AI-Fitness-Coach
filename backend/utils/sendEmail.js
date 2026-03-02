@@ -23,6 +23,7 @@ const sendEmail = async (options) => {
             user: process.env.EMAIL_USERNAME,
             pass: process.env.EMAIL_PASSWORD,
         },
+        family: 4, // Force IPv4 to avoid ENETUNREACH on IPv6
     });
 
     const mailOptions = {
