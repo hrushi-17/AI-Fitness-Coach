@@ -23,13 +23,13 @@ const sendEmail = async (options) => {
 
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
-        port: 465,
-        secure: true, // Use SSL
+        port: 587,
+        secure: false, // Use STARTTLS
         auth: {
             user: process.env.EMAIL_USERNAME,
             pass: process.env.EMAIL_PASSWORD,
         },
-        family: 4, // Force IPv4 to avoid ENETUNREACH on IPv6
+        family: 4, // Force IPv4
     });
 
     const mailOptions = {
