@@ -7,50 +7,56 @@ if (dns.setDefaultResultOrder) {
 }
 
 const sendEmail = async (options) => {
-    // 1. Mandatory Credential Check
-    if (
-        !process.env.EMAIL_USERNAME ||
-        process.env.EMAIL_USERNAME === "your_email@gmail.com"
-    ) {
-        console.log("----------------------------------------------------");
-        console.log("MOCK EMAIL SERVICE (Missing EMAIL_USERNAME)");
-        console.log(`To: ${options.email}`);
-        console.log(`Subject: ${options.subject}`);
-        console.log("----------------------------------------------------");
-        return;
+    // Log credential status (safely)
+    console.log("Email Service Debug Hook:");
+    console.log("- USERNAME present:", !!process.env.EMAIL_USERNAME);
+    console.log("- PASSWORD present:", !!process.env.EMAIL_PASSWORD);
+
+    if (!process.env.EMAIL_USERNAME || !process.env.EMAIL_PASSWORD) {
+        console.error("CRITICAL: Missing email credentials in environment variables.");
+        throw new Error("Email configuration error: check server logs");
     }
 
-    // 2. Ultimate Gmail configuration for Render
-    // Using 'service: gmail' is more robust than manual host/port
+    // Clean password
+    const cleanPassword = (process.env.EMAIL_PASSWORD || "").trim().replace(/\s/g, "");
+
+    // Use Port 465 (SSL) with explicit host - often more stable than 'service' helper on Render
     const transporter = nodemailer.createTransport({
-        service: "gmail",
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true, // Use SSL
         auth: {
             user: process.env.EMAIL_USERNAME,
-            pass: (process.env.EMAIL_PASSWORD || "").trim().replace(/\s/g, ""), // Automatically remove spaces from App Password
+            pass: cleanPassword,
         },
         tls: {
-            // This prevents issues with certificates in internal networks
-            rejectUnauthorized: false
-        }
+            rejectUnauthorized: false,
+            servername: "smtp.gmail.com"
+        },
+        // DEBUGGING: These will show the full SMTP conversation in Render logs
+        logger: true,
+        debug: true,
+        connectionTimeout: 15000, // 15s
+        greetingTimeout: 15000,
     });
 
     const mailOptions = {
-        from: process.env.EMAIL_FROM || process.env.EMAIL_USERNAME,
+        from: `AI Fitness Coach <${process.env.EMAIL_FROM || process.env.EMAIL_USERNAME}>`,
         to: options.email,
         subject: options.subject,
         html: options.text,
     };
 
     try {
-        console.log(`Attempting to send email to: ${options.email}...`);
+        console.log(`Starting email transmission to: ${options.email}...`);
         const info = await transporter.sendMail(mailOptions);
-        console.log("Email sent successfully! ID:", info.messageId);
+        console.log("SUCCESS: Email sent! Message ID:", info.messageId);
+        return info;
     } catch (error) {
-        // Log the specific error to Render console for debugging
-        console.error("SMTP Error detected:", error.message);
-        if (error.code === 'EAUTH') {
-            console.error("CRITICAL: Authentication failed. Please verify EMAIL_PASSWORD is an App Password.");
-        }
+        console.error("FAILED to send email.");
+        console.error("Error Message:", error.message);
+        console.error("Error Code:", error.code);
+        console.error("Error Command:", error.command);
         throw error;
     }
 };
