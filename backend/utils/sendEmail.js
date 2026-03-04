@@ -1,69 +1,29 @@
-const nodemailer = require("nodemailer");
-const dns = require("dns");
+const { Resend } = require('resend');
 
-/**
- * GLOBAL DNS OVERRIDE
- * Forces the entire Node.js process to ignore IPv6 (AAAA) records.
- * This is the only definitive way to stop Nodemailer from attempting 
- * IPv6 connections that result in ENETUNREACH on platforms like Render.
- */
-const originalLookup = dns.lookup;
-dns.lookup = function (hostname, options, callback) {
-    if (typeof options === "function") {
-        callback = options;
-        options = { family: 4 };
-    } else if (typeof options === "object") {
-        options.family = 4;
-    } else {
-        options = { family: 4 };
-    }
-    return originalLookup(hostname, options, callback);
-};
-
-// Also set the result order as a secondary line of defense
-if (dns.setDefaultResultOrder) {
-    dns.setDefaultResultOrder("ipv4first");
-}
+const resend = new Resend(process.env.RESEND_API_KEY || 're_MR69WUc5_DDuyrCt4LU8v6Maj22te7wpx');
 
 const sendEmail = async (options) => {
-    // 1. Sanitize the App Password
-    const cleanPassword = (process.env.EMAIL_PASSWORD || "").trim().replace(/\s/g, "");
-
-    // 2. Configure Transporter
-    // Port 587 with secure: false (STARTTLS) is often more reliable than 465 
-    // when facing firewall restrictions in cloud environments.
-    const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true, // Use SSL/TLS for port 465
-        family: 4, // FORCE IPv4 to avoid ENETUNREACH on Render
-        auth: {
-            user: process.env.EMAIL_USERNAME,
-            pass: cleanPassword,
-        },
-        tls: {
-            rejectUnauthorized: false, // Bypass certificate issues in internal networks
-        },
-        logger: true,
-        debug: true,
-    });
-
-    const mailOptions = {
-        from: `AI Fitness Coach <${process.env.EMAIL_FROM || process.env.EMAIL_USERNAME}>`,
-        to: options.email,
-        subject: options.subject,
-        html: options.text,
-    };
-
     try {
-        console.log(`Starting definitive email broadcast to: ${options.email}...`);
-        const info = await transporter.sendMail(mailOptions);
-        console.log("SUCCESS: SMTP handshake complete. ID:", info.messageId);
-        return info;
+        console.log(`Starting Resend email broadcast to: ${options.email}...`);
+
+        // Resend requires a verified domain to send 'from' custom addresses.
+        // For testing/onboarding, we must use their default sandbox domain.
+        const fromEmail = process.env.NODE_ENV === 'production' && process.env.EMAIL_FROM
+            ? process.env.EMAIL_FROM
+            : 'onboarding@resend.dev';
+
+        const data = await resend.emails.send({
+            from: `AI Fitness Coach <${fromEmail}>`,
+            to: options.email,
+            subject: options.subject,
+            html: options.text, // Resend uses 'html' for HTML content
+        });
+
+        console.log("SUCCESS: Email sent via Resend API. ID:", data.id);
+        return data;
     } catch (error) {
-        console.error("CRITICAL SMTP FAILURE.");
+        console.error("CRITICAL RESEND API FAILURE.");
         console.error("Message:", error.message);
-        console.error("Code:", error.code);
         throw error;
     }
 };
