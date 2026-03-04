@@ -9,7 +9,7 @@ function ResetPassword() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const resetSessionToken = location.state?.resetSessionToken; // Get token passed from VerifyOtp
@@ -34,6 +34,7 @@ function ResetPassword() {
             return;
         }
 
+        setLoading(true);
         try {
             // Send resetSessionToken in body
             const { data } = await api.put("/auth/resetpassword", {
@@ -42,9 +43,9 @@ function ResetPassword() {
             });
             setMessage(data.data);
             setError("");
-            setTimeout(() => {
-                navigate("/login");
-            }, 2000);
+
+            // Redirect immediately for better performance
+            navigate("/login");
         } catch (err) {
             setError(
                 err.response && err.response.data.error
@@ -52,6 +53,8 @@ function ResetPassword() {
                     : "Failed to reset password"
             );
             setMessage("");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -110,8 +113,8 @@ function ResetPassword() {
                         </div>
                     </div>
 
-                    <button type="submit" className="auth-btn">
-                        Save New Password
+                    <button type="submit" className="auth-btn" disabled={loading}>
+                        {loading ? "Saving..." : "Save New Password"}
                     </button>
                 </form>
             </div>

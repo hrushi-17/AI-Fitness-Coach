@@ -7,7 +7,7 @@ function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
@@ -17,6 +17,7 @@ function Login() {
             return;
         }
 
+        setLoading(true);
         try {
             const { data } = await api.post("/auth/login", { email, password });
             localStorage.setItem("token", data.token);
@@ -27,6 +28,8 @@ function Login() {
                     ? err.response.data.error
                     : "Login failed"
             );
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -72,8 +75,8 @@ function Login() {
                         </div>
                     </div>
 
-                    <button type="submit" className="auth-btn">
-                        Sign In
+                    <button type="submit" className="auth-btn" disabled={loading}>
+                        {loading ? "Signing In..." : "Sign In"}
                     </button>
                 </form>
 

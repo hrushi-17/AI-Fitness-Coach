@@ -17,10 +17,7 @@ function ForgotPassword() {
             setMessage(data.data); // "OTP Sent to Email"
             setError("");
 
-            // Navigate to OTP verification page after 1.5 seconds, passing email state
-            setTimeout(() => {
-                navigate("/verifyotp", { state: { email } });
-            }, 1500);
+            navigate("/verifyotp", { state: { email } });
 
         } catch (err) {
             setError(

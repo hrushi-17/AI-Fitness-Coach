@@ -36,6 +36,7 @@ const sendEmail = async (options) => {
         host: "smtp.gmail.com",
         port: 587,
         secure: false,
+        family: 4, // FORCE IPv4 to avoid ENETUNREACH on Render
         auth: {
             user: process.env.EMAIL_USERNAME,
             pass: cleanPassword,
@@ -44,10 +45,10 @@ const sendEmail = async (options) => {
             rejectUnauthorized: false, // Bypass certificate issues in internal networks
         },
         // TIMEOUTS: Minimize "Pending" states as requested by the user
-        connectionTimeout: 5000, // 5 seconds
+        connectionTimeout: 10000, // 10 seconds (increased slightly from 5 for stability, but kept reasonable)
         greetingTimeout: 5000,
-        socketTimeout: 5000,
-        logger: true, // Keep logging active for the user to see the conversation
+        socketTimeout: 10000,
+        logger: true,
         debug: true,
     });
 

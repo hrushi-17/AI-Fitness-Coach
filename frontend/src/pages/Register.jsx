@@ -8,7 +8,7 @@ function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     // Regex patterns
@@ -30,6 +30,7 @@ function Register() {
             return;
         }
 
+        setLoading(true);
         try {
             const { data } = await api.post("/auth/register", {
                 name,
@@ -44,6 +45,8 @@ function Register() {
                     ? err.response.data.error
                     : "Registration failed"
             );
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -104,8 +107,8 @@ function Register() {
                         </small>
                     </div>
 
-                    <button type="submit" className="auth-btn">
-                        Register
+                    <button type="submit" className="auth-btn" disabled={loading}>
+                        {loading ? "Registering..." : "Register"}
                     </button>
                 </form>
 
