@@ -6,11 +6,11 @@ const sendEmail = async (options) => {
     try {
         console.log(`Starting Resend email broadcast to: ${options.email}...`);
 
-        // Resend requires a verified domain to send 'from' custom addresses.
-        // For testing/onboarding, we must use their default sandbox domain.
-        const fromEmail = process.env.NODE_ENV === 'production' && process.env.EMAIL_FROM
-            ? process.env.EMAIL_FROM
-            : 'onboarding@resend.dev';
+        // Since the user is on the Resend free tier without a verified domain,
+        // we MUST use the sandbox address 'onboarding@resend.dev'.
+        // Using anything else (like process.env.EMAIL_FROM) will cause 
+        // Resend to reject the email with a 403 Forbidden error.
+        const fromEmail = 'onboarding@resend.dev';
 
         const data = await resend.emails.send({
             from: `AI Fitness Coach <${fromEmail}>`,
