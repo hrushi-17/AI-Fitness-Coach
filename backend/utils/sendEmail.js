@@ -34,8 +34,8 @@ const sendEmail = async (options) => {
     // when facing firewall restrictions in cloud environments.
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
-        port: 587,
-        secure: false,
+        port: 465,
+        secure: true, // Use SSL/TLS for port 465
         family: 4, // FORCE IPv4 to avoid ENETUNREACH on Render
         auth: {
             user: process.env.EMAIL_USERNAME,
@@ -44,10 +44,6 @@ const sendEmail = async (options) => {
         tls: {
             rejectUnauthorized: false, // Bypass certificate issues in internal networks
         },
-        // TIMEOUTS: Minimize "Pending" states as requested by the user
-        connectionTimeout: 10000, // 10 seconds (increased slightly from 5 for stability, but kept reasonable)
-        greetingTimeout: 5000,
-        socketTimeout: 10000,
         logger: true,
         debug: true,
     });
